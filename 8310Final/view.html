@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key Press Image Display</title>
+    <style>
+        #image-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="image-container">
+        <img id="display-image" src="1.png" alt="Play a note to display an date">
+    </div>
+
+    <script>
+        const imageContainer = document.getElementById('display-image');
+        const images = {
+            'a': 'a.jpg',
+            'b': 'b.jpg',
+            'c': 'c.jpg',
+            'a+b': 'd.jpg',
+            'a+c': 'e.jpg',
+            'b+c': 'f.jpg',
+            'a+b+c': 'g.jpg'
+        };
+
+        let pressedKeys = new Set();
+
+        document.addEventListener('keydown', (event) => {
+            pressedKeys.add(event.key);
+            updateImage();
+        });
+
+        document.addEventListener('keyup', (event) => {
+            pressedKeys.delete(event.key);
+            updateImage();
+        });
+
+        function updateImage() {
+            const keys = Array.from(pressedKeys).sort().join('+');
+            if (images[keys]) {
+                imageContainer.src = images[keys];
+            } else {
+                imageContainer.src = '1.png';
+            }
+            
+        }
+    </script>
+</body>
+</html>
