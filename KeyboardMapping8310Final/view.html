@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key Press Image Display</title>
+    <style>
+        #image-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="image-container">
+        <img id="display-image" src="piano.jpg" alt="Play a note to display an date">
+    </div>
+
+    <script>
+        const imageContainer = document.getElementById('display-image');
+        const images = {
+    'c': 'C.jpg',
+    'e': 'E.jpg',
+    'g': 'G.jpg',
+    'b': 'B.jpg',
+    'd': 'D.jpg',
+    'f': 'F.jpg',
+    'a': 'A.jpg',
+    'v': 'hiC.png',
+    'c+e': 'CE.jpg',
+    'c+g': 'CG.jpg',
+    'e+g': 'EG.jpg',
+    'c+e+g': 'CEG.jpg',
+    'd+g+b': 'DGB.jpg',
+    'a+c+e': 'EAC.jpg',
+    'a+c+f': 'FAC.jpg'
+};
+
+const sounds = {
+    'c': 'C4.mp3',
+    'd': 'D4.mp3',
+    'e': 'E4.mp3',
+    'f': 'F4.mp3',
+    'g': 'G4.mp3',
+    'a': 'A4.mp3',
+    'b': 'B4.mp3',
+    'v': 'C5.mp3',
+    'c+e+g': 'c-major-chord.mp3',
+    'd+g+b': 'g-major-chord.mp3',
+    'a+c+e': 'a-minor-chord.mp3',
+    'a+c+f': 'f-major-chord.mp3',
+    'c+e': 'c-major-third-interval.mp3',
+    'c+g': 'c-perfect-fifth-interval.mp3',
+    'e+g': 'e-minor-third-interval.mp3'
+};
+
+
+
+        let pressedKeys = new Set();
+        let currentAudio = null;
+        let keyStates = {};
+
+document.addEventListener('keydown', (event) => {
+    // Only add the key and play sound if it wasn't already pressed
+    if (!keyStates[event.key]) {
+        pressedKeys.add(event.key.toLowerCase()); // ensure lowercase
+        keyStates[event.key] = true;
+        
+        // Get the current combination of keys
+        const keys = Array.from(pressedKeys).sort().join('+');
+        
+        console.log('Current keys pressed:', keys); // Debug line to see what keys are registered
+        
+        // Check if this combination exists in our mappings
+        if (images[keys] && sounds[keys]) {
+            updateImage(keys);
+        }
+    }
+});
+
+document.addEventListener('keyup', (event) => {
+    pressedKeys.delete(event.key.toLowerCase()); // ensure lowercase
+    keyStates[event.key] = false;
+    
+    // Get the remaining combination of keys
+    const keys = Array.from(pressedKeys).sort().join('+');
+    
+    // Update with remaining keys or default
+    if (pressedKeys.size === 0) {
+        imageContainer.src = 'piano.jpg';
+    } else if (images[keys] && sounds[keys]) {
+        updateImage(keys);
+    }
+});
+
+function updateImage(keys) {
+    // Update image
+    if (images[keys]) {
+        imageContainer.src = images[keys];
+    }
+
+    // Handle sound
+    if (sounds[keys]) {
+        // Stop current audio if playing
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+        }
+        // Play new audio
+        currentAudio = new Audio(sounds[keys]);
+        currentAudio.play();
+    }
+}
+
+
+
+    </script>
+</body>
+</html>
